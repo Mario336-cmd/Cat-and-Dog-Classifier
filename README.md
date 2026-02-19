@@ -38,7 +38,19 @@ npm run preview
 
 ## Dataset and Split Summary
 
-Source archives are under `Datasets/Original Datasets (Zip and tar Files)` (Microsoft, freeCodeCamp, Oxford, Places365, and MS COCO assets used in the notebook pipeline).
+Source archives are stored in `Datasets/Original Datasets (Zip and tar Files)`.
+
+Dataset sources used by this project:
+
+- Microsoft Cats vs Dogs (PetImages): [`kagglecatsanddogs_5340.zip`](https://download.microsoft.com/download/3/E/1/3E1C3F21-ECDB-4869-8368-6DEBA77B919F/kagglecatsanddogs_5340.zip)
+- freeCodeCamp cats and dogs archive: [`cats_and_dogs.zip`](https://cdn.freecodecamp.org/project-data/cats-and-dogs/cats_and_dogs.zip)
+- Oxford-IIIT Pet Dataset: [`images.tar.gz`](https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz)
+- Oxford-IIIT Pet Dataset: [`annotations.tar.gz`](https://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz)
+- Places365-Standard dataset page: [`places2.csail.mit.edu/download.html`](http://places2.csail.mit.edu/download.html)
+- Places365-Standard file used here: [`val_256.tar`](http://data.csail.mit.edu/places/places365/val_256.tar)
+- MS COCO dataset page: [`cocodataset.org/#download`](https://cocodataset.org/#download)
+- MS COCO file used here: [`val2017.zip`](http://images.cocodataset.org/zips/val2017.zip)
+- MS COCO file used here: [`annotations_trainval2017.zip`](http://images.cocodataset.org/annotations/annotations_trainval2017.zip)
 
 | Dataset Stage | Cats | Dogs | Unknown |
 | --- | ---: | ---: | ---: |
