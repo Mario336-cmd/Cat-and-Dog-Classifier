@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap');
+
+:root {
+  --font-heading: 'Sora', 'Segoe UI', sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+
+  --color-ink-950: #0f1724;
+  --color-ink-900: #17263f;
+  --color-ink-700: #31496c;
+  --color-ink-500: #5e7394;
+  --color-ink-200: #c4d0e3;
+
+  --color-surface-100: #f4f8ff;
+  --color-surface-200: #edf3fd;
+  --color-surface-300: #e4ecfa;
+  --color-white: #ffffff;
+
+  --color-accent-500: #4c83f8;
+  --color-accent-600: #2d65da;
+  --color-accent-100: #dbe7ff;
+
+  --color-mint-600: #1f9e76;
+  --color-mint-100: #d8f5e9;
+
+  --color-amber-600: #b3771f;
+  --color-amber-100: #fff3dd;
+
+  --color-danger-600: #be4141;
+  --color-danger-100: #ffe7e7;
+
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 10px;
+
+  --shadow-soft: 0 18px 40px rgba(13, 31, 64, 0.13);
+  --shadow-focus: 0 0 0 3px rgba(76, 131, 248, 0.3);
+  --border-soft: 1px solid rgba(23, 38, 63, 0.12);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink-900);
+  font-family: var(--font-body);
+  line-height: 1.45;
+  background: #ffffff;
+}
+
+button,
+input {
+  font: inherit;
+}
