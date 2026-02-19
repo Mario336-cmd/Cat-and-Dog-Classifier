@@ -98,7 +98,6 @@ Metrics below come from the holdout evaluation outputs embedded in `AI Model/cat
 ## Training / Reproduction Notes
 
 - Primary training workflow lives in `AI Model/cat_dog_classifier.ipynb`.
-- No pinned Python environment file is currently committed (`requirements.txt`, `pyproject.toml`, etc.).
 - Minimal dependency install:
 
 ```bash
@@ -109,26 +108,15 @@ python -m pip install tensorflow numpy matplotlib
   - model artifacts in `AI Model/models`
   - metadata/history in `AI Model/outputs`
 
-## Deployment Notes (GitHub Pages)
-
-- The frontend is deployable as a static site.
-- For project pages (for example `https://<user>.github.io/<repo>/`), set Vite `base` to the repo path in `Frontend/vite.config.ts`.
-- Deploy only frontend build output (`Frontend/dist`) for hosting.
-- Do not deploy large dataset directories; keep training data out of static hosting artifacts.
-- Large dataset archives in this repo exceed normal Git hosting file-size limits, so they should not be pushed in standard Git flows without LFS or external storage.
 
 ## Limitations
 
 - Browser CORS can block URL-based image fetches.
 - Unknown detection is threshold-based and can trade off rejection rate vs cat/dog misclassification.
-- Repository footprint is large due to dataset archives and extracted artifacts.
+- Can only work on Computers
 
 ## Future Improvements
 
-- Add pinned Python dependencies (`requirements.txt` or equivalent).
-- Add a reproducible model export/conversion script for TFJS graph assets.
-- Add CI checks for frontend build and documentation consistency.
-
-## License / Data Usage Placeholder
-
-Before public release, add explicit project licensing and dataset usage/redistribution terms for every upstream dataset included or referenced by this repository.
+- Add more classes of animals
+- Improve unknown detection as well as cat and dog.
+- Also it to work on mobile devices while the model still working well.
