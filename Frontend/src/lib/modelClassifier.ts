@@ -35,14 +35,27 @@ const decodeImageBlob = (imageBlob: Blob): Promise<HTMLImageElement> =>
 const createModelInputTensor = (image: HTMLImageElement): tf.Tensor4D =>
   tf.tidy(() => {
     const imageTensor = tf.browser.fromPixels(image)
-    const resizedTensor = tf.image.resizeBilinear(
-      imageTensor,
-      [MODEL_INPUT_SIZE, MODEL_INPUT_SIZE],
-      true,
-    )
+    // Center-crop first to avoid strong aspect-ratio distortion (common on mobile camera images).
+    const [height, width] = imageTensor.shape
+    const cropSize = Math.min(height, width)
+    const offsetY = Math.floor((height - cropSize) / 2)
+    const offsetX = Math.floor((width - cropSize) / 2)
+    const croppedTensor = imageTensor.slice([offsetY, offsetX, 0], [cropSize, cropSize, 3])
+    const resizedTensor = tf.image.resizeBilinear(croppedTensor, [MODEL_INPUT_SIZE, MODEL_INPUT_SIZE], true)
     const normalizedTensor = resizedTensor.toFloat().div(255)
     return normalizedTensor.expandDims(0)
   })
+
+const initializeBackend = async (): Promise<void> => {
+  if (tf.getBackend() !== 'webgl') {
+    try {
+      await tf.setBackend('webgl')
+    } catch {
+      // Keep default backend if WebGL is unavailable.
+    }
+  }
+  await tf.ready()
+}
 
 const resolvePrediction = (probabilities: number[]): Pick<PredictionResult, 'label' | 'probabilityPercent'> => {
   if (probabilities.length < 3) {
@@ -68,10 +81,12 @@ const resolvePrediction = (probabilities: number[]): Pick<PredictionResult, 'lab
 }
 
 export const preloadClassifierModel = async (): Promise<void> => {
+  await initializeBackend()
   await loadModel()
 }
 
 export const classifyImageBlob = async (imageBlob: Blob): Promise<PredictionResult> => {
+  await initializeBackend()
   const model = await loadModel()
   const image = await decodeImageBlob(imageBlob)
   const inputTensor = createModelInputTensor(image)
