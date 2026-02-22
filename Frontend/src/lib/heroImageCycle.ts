@@ -140,26 +140,45 @@ export const advanceHeroCycle = (previous: HeroCycleState): HeroCycleState => {
   }
 }
 
-const preloadImage = (imageUrl: string): Promise<void> => {
+export const ensureHeroImageReady = (imageUrl: string): Promise<void> => {
   if (typeof window === 'undefined' || typeof Image === 'undefined' || !imageUrl) {
     return Promise.resolve()
   }
 
   return new Promise((resolve) => {
     const image = new Image()
+    let isSettled = false
 
     const finish = () => {
+      if (isSettled) {
+        return
+      }
+
+      isSettled = true
       image.onload = null
       image.onerror = null
       resolve()
     }
 
-    image.onload = finish
+    const decodeAndFinish = () => {
+      if (typeof image.decode === 'function') {
+        void image.decode().catch(() => {
+          // Decode failures are non-fatal if the image itself loaded.
+        }).finally(() => {
+          finish()
+        })
+        return
+      }
+
+      finish()
+    }
+
+    image.onload = decodeAndFinish
     image.onerror = finish
     image.src = imageUrl
 
     if (image.complete) {
-      finish()
+      decodeAndFinish()
     }
   })
 }
@@ -171,5 +190,5 @@ export const preloadHeroCycleImages = async (
     new Set([...state.catQueue, ...state.dogQueue].filter((imageUrl) => imageUrl.length > 0)),
   )
 
-  await Promise.all(uniqueImageUrls.map((imageUrl) => preloadImage(imageUrl)))
+  await Promise.all(uniqueImageUrls.map((imageUrl) => ensureHeroImageReady(imageUrl)))
 }

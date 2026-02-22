@@ -10,6 +10,7 @@ import UrlInput from './components/UrlInput'
 import {
   advanceHeroCycle,
   createInitialHeroCycleState,
+  ensureHeroImageReady,
   preloadHeroCycleImages,
 } from './lib/heroImageCycle'
 import { classifyImageBlob, preloadClassifierModel } from './lib/modelClassifier'
@@ -101,14 +102,40 @@ function App() {
       return
     }
 
+    let isCancelled = false
+    const currentImage = heroCycle.currentImage
+
     const timeoutId = window.setTimeout(() => {
-      setHeroCycle((previous) => advanceHeroCycle(previous))
+      const nextCycle = advanceHeroCycle(heroCycle)
+      const applyNextCycle = () => {
+        if (isCancelled) {
+          return
+        }
+
+        setHeroCycle((previous) => {
+          if (previous.currentImage !== currentImage) {
+            return previous
+          }
+
+          return nextCycle
+        })
+      }
+
+      if (!nextCycle.currentImage || nextCycle.currentImage === currentImage) {
+        applyNextCycle()
+        return
+      }
+
+      void ensureHeroImageReady(nextCycle.currentImage).finally(() => {
+        applyNextCycle()
+      })
     }, HERO_IMAGE_ROTATE_MS)
 
     return () => {
+      isCancelled = true
       window.clearTimeout(timeoutId)
     }
-  }, [heroCycle.currentImage, isHeroCyclePrimed, loadedHeroImageUrl])
+  }, [heroCycle, isHeroCyclePrimed, loadedHeroImageUrl])
 
   useEffect(() => {
     return () => {
