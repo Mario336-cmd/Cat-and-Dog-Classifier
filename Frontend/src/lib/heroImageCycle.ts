@@ -139,3 +139,37 @@ export const advanceHeroCycle = (previous: HeroCycleState): HeroCycleState => {
     dogNextIndex: fallbackType === 'dog' ? fallbackPick.nextIndex : previous.dogNextIndex,
   }
 }
+
+const preloadImage = (imageUrl: string): Promise<void> => {
+  if (typeof window === 'undefined' || typeof Image === 'undefined' || !imageUrl) {
+    return Promise.resolve()
+  }
+
+  return new Promise((resolve) => {
+    const image = new Image()
+
+    const finish = () => {
+      image.onload = null
+      image.onerror = null
+      resolve()
+    }
+
+    image.onload = finish
+    image.onerror = finish
+    image.src = imageUrl
+
+    if (image.complete) {
+      finish()
+    }
+  })
+}
+
+export const preloadHeroCycleImages = async (
+  state: Pick<HeroCycleState, 'catQueue' | 'dogQueue'>,
+): Promise<void> => {
+  const uniqueImageUrls = Array.from(
+    new Set([...state.catQueue, ...state.dogQueue].filter((imageUrl) => imageUrl.length > 0)),
+  )
+
+  await Promise.all(uniqueImageUrls.map((imageUrl) => preloadImage(imageUrl)))
+}

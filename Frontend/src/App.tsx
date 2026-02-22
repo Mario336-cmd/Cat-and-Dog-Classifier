@@ -7,7 +7,11 @@ import ResultPanel from './components/ResultPanel'
 import StatusBanner from './components/StatusBanner'
 import UploadInput from './components/UploadInput'
 import UrlInput from './components/UrlInput'
-import { advanceHeroCycle, createInitialHeroCycleState } from './lib/heroImageCycle'
+import {
+  advanceHeroCycle,
+  createInitialHeroCycleState,
+  preloadHeroCycleImages,
+} from './lib/heroImageCycle'
 import { classifyImageBlob, preloadClassifierModel } from './lib/modelClassifier'
 import { createValidationError, prepareImageUrl, validateFile } from './lib/validators'
 import type { AppState, InputSource } from './types/classifier'
@@ -53,6 +57,7 @@ function App() {
   const [state, setState] = useState<AppState>(initialState)
   const [isDesktopOnlyBlocked, setIsDesktopOnlyBlocked] = useState<boolean>(() => isMobileLikeDevice())
   const [heroCycle, setHeroCycle] = useState(createInitialHeroCycleState)
+  const [isHeroCyclePrimed, setIsHeroCyclePrimed] = useState(false)
   const [loadedHeroImageUrl, setLoadedHeroImageUrl] = useState('')
   const classifyLockRef = useRef(false)
 
@@ -69,6 +74,25 @@ function App() {
   }, [])
 
   useEffect(() => {
+    let isCancelled = false
+
+    setIsHeroCyclePrimed(false)
+    void preloadHeroCycleImages(heroCycle).finally(() => {
+      if (!isCancelled) {
+        setIsHeroCyclePrimed(true)
+      }
+    })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [heroCycle.catQueue, heroCycle.dogQueue])
+
+  useEffect(() => {
+    if (!isHeroCyclePrimed) {
+      return
+    }
+
     if (!heroCycle.currentImage) {
       return
     }
@@ -84,7 +108,7 @@ function App() {
     return () => {
       window.clearTimeout(timeoutId)
     }
-  }, [heroCycle.currentImage, loadedHeroImageUrl])
+  }, [heroCycle.currentImage, isHeroCyclePrimed, loadedHeroImageUrl])
 
   useEffect(() => {
     return () => {
