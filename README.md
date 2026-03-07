@@ -118,5 +118,5 @@ python -m pip install tensorflow numpy matplotlib
 ## Future Improvements
 
 - Add more classes of animals
-- Improve unknown detection as well as cat and dog.
-- Also it to work on mobile devices while the model still working well.
+- Improve unknown and cat and dog detection.
+- Allow for web application to work on non-desktop devices.
