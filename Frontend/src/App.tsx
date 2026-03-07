@@ -183,7 +183,7 @@ function App() {
         ? Boolean(state.previewUrl && hasResolvedPreview)
         : false
   const isPreviewLoading = hasPreview && !isPreviewReady && state.status !== 'error'
-  const canClassify = isPreviewReady && !isClassifying && modelStatus === 'ready'
+  const canClassify = isPreviewReady && !isClassifying && isModelReady
   const classifyButtonLabel = isClassifying
     ? 'Classifying...'
     : hasModelLoadError
