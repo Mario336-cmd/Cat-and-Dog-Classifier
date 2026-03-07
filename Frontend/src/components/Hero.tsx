@@ -102,7 +102,20 @@ function Hero({ imageUrl, onImageLoad, onImageError }: HeroProps) {
     <section className="section-card hero">
       <div className="hero-layout">
         <div className="hero-content">
-          <p className="hero-kicker">COMPUTER VISION</p>
+          <div className="hero-meta">
+            <p className="hero-kicker">COMPUTER VISION</p>
+            <span className="hero-meta-separator" aria-hidden="true">
+              |
+            </span>
+            <a
+              className="source-link"
+              href="https://github.com/Mario336-cmd/Cat-and-Dog-Classifier"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Source Code
+            </a>
+          </div>
           <h1>Cat and Dog Image Classifier</h1>
           <p className="hero-copy">
             This website is an interactive showcase of a Convolutional Neural Network (CNN)-based

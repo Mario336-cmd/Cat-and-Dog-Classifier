@@ -31,6 +31,9 @@ const initialState: AppState = {
 
 const HERO_IMAGE_ROTATE_MS = 6500
 const MOBILE_USER_AGENT_PATTERN = /android|iphone|ipad|ipod|mobile|iemobile|opera mini/i
+const MODEL_LOADING_ERROR_MESSAGE = 'Classifier model failed to load. Refresh the page and try again.'
+
+type ModelStatus = 'loading' | 'ready' | 'error'
 
 const getRestingStatus = (
   previous: Pick<AppState, 'previewUrl' | 'result'>,
@@ -56,6 +59,7 @@ const isMobileLikeDevice = (): boolean => {
 
 function App() {
   const [state, setState] = useState<AppState>(initialState)
+  const [modelStatus, setModelStatus] = useState<ModelStatus>('loading')
   const [isDesktopOnlyBlocked, setIsDesktopOnlyBlocked] = useState<boolean>(() => isMobileLikeDevice())
   const [heroCycle, setHeroCycle] = useState(createInitialHeroCycleState)
   const [isHeroCyclePrimed, setIsHeroCyclePrimed] = useState(false)
@@ -146,12 +150,30 @@ function App() {
   }, [state.previewUrl])
 
   useEffect(() => {
-    void preloadClassifierModel().catch(() => {
-      // A loading error will be surfaced when classify is requested.
-    })
+    let isCancelled = false
+
+    setModelStatus('loading')
+    void preloadClassifierModel()
+      .then(() => {
+        if (!isCancelled) {
+          setModelStatus('ready')
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setModelStatus('error')
+        }
+      })
+
+    return () => {
+      isCancelled = true
+    }
   }, [])
 
   const isClassifying = state.status === 'classifying'
+  const isModelLoading = modelStatus === 'loading'
+  const isModelReady = modelStatus === 'ready'
+  const hasModelLoadError = modelStatus === 'error'
   const hasPreview = state.previewUrl.length > 0
   const hasResolvedPreview = state.resolvedPreviewUrl.length > 0
   const isPreviewReady =
@@ -161,9 +183,13 @@ function App() {
         ? Boolean(state.previewUrl && hasResolvedPreview)
         : false
   const isPreviewLoading = hasPreview && !isPreviewReady && state.status !== 'error'
-  const canClassify = isPreviewReady && !isClassifying
+  const canClassify = isPreviewReady && !isClassifying && modelStatus === 'ready'
   const classifyButtonLabel = isClassifying
     ? 'Classifying...'
+    : hasModelLoadError
+      ? 'Model Unavailable'
+    : isModelLoading
+      ? 'Preparing Model...'
     : isPreviewLoading
       ? 'Loading Preview...'
     : state.result
@@ -470,6 +496,8 @@ function App() {
 
           {state.error?.message ? (
             <StatusBanner tone="error" message={state.error.message} />
+          ) : hasModelLoadError ? (
+            <StatusBanner tone="error" message={MODEL_LOADING_ERROR_MESSAGE} />
           ) : isPreviewLoading ? (
             <StatusBanner tone="info" message="Loading image preview..." />
           ) : null}
