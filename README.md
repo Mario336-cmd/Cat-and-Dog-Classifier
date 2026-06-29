@@ -52,6 +52,8 @@ Dataset sources used by this project:
 - MS COCO file used here: [`val2017.zip`](http://images.cocodataset.org/zips/val2017.zip)
 - MS COCO file used here: [`annotations_trainval2017.zip`](http://images.cocodataset.org/annotations/annotations_trainval2017.zip)
 
+The prepared combined pool is built from Microsoft Cats vs Dogs and freeCodeCamp images for the `cats` and `dogs` classes, and from the remaining Places365-Standard images for the `unknown` class before being split into training and validation sets.
+
 | Dataset Stage | Cats | Dogs | Unknown |
 | --- | ---: | ---: | ---: |
 | Prepared combined pool (`Datasets/Prepared/combined_pool`) | 13427 | 13397 | 32850 |
